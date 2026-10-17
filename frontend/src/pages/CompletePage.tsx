@@ -15,8 +15,6 @@ export function CompletePage() {
   // A direct visit to /complete has no creation result to display.
   if (!result) return <Navigate to="/" replace />;
 
-  const postStatus = result.firstPost.status;
-
   return (
     <div className="site-shell">
       <AppHeader />
@@ -38,17 +36,6 @@ export function CompletePage() {
             ))}
           </div>
           <div className="summary-divider" />
-          <div className="status-line">
-            <span className={`status-dot${postStatus === "failed" ? " status-dot--error" : ""}`} />
-            <span>
-              {postStatus === "queued" && "自動投稿の準備ができました"}
-              {postStatus === "posted" && "最初の投稿が完了しました"}
-              {postStatus === "failed" && "最初の投稿に失敗しました"}
-            </span>
-          </div>
-          {postStatus === "queued" && (
-            <p className="field-hint">最初の投稿は準備でき次第、公開されます。</p>
-          )}
         </section>
 
         <Link to="/" className="button-link">
