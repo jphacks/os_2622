@@ -3,3 +3,6 @@ dist/
 data/
 .env
 *.sqlite*
+
+# Local-only verification tools, tests, and scratch files
+/.local/

@@ -10,10 +10,22 @@ import { login } from './bluesky.js';
 import { generatePost } from './ai.js';
 import { submitPost } from './post.js';
 import { runDuePosts } from './scheduler.js';
+import { findBotAccount, saveBotAccount } from './bot-accounts.js';
+import { registerBot } from './bot-registration.js';
+import { authenticatePetAccount, createPetProfile, type AuthenticatedPetAccount } from './pet-profile.js';
+import { createBotsRouter } from './bots-router.js';
 
 const app = express();
 app.disable('x-powered-by');
 app.use(cors({ origin: env.FRONTEND_ORIGIN.split(',').map((origin) => origin.trim()) }));
+app.use('/api/bots', createBotsRouter((input) => registerBot<AuthenticatedPetAccount>(input, {
+  authenticate: authenticatePetAccount,
+  isRegistered: (did) => Boolean(findBotAccount(did)),
+  createProfile: createPetProfile,
+  saveAccount: saveBotAccount,
+  onSaved: (account) => account.enableSessionPersistence(),
+  now: () => new Date(),
+})));
 app.use(express.json({ limit: '20kb' }));
 
 type AuthedRequest = Request & { account: Account };

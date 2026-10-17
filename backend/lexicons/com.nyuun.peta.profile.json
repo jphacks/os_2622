@@ -1,0 +1,23 @@
+{
+  "lexicon": 1,
+  "id": "com.nyuun.peta.profile",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "literal:self",
+      "record": {
+        "type": "object",
+        "required": ["name", "personality", "interests"],
+        "properties": {
+          "name": { "type": "string" },
+          "personality": { "type": "string" },
+          "interests": {
+            "type": "array",
+            "maxLength": 10,
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

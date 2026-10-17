@@ -24,6 +24,15 @@ CREATE TABLE IF NOT EXISTS posts (
  error TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS pets_due ON pets(enabled, next_run_at);
+CREATE TABLE IF NOT EXISTS bot_accounts (
+ did TEXT PRIMARY KEY,
+ handle TEXT NOT NULL,
+ pds_url TEXT NOT NULL,
+ encrypted_session TEXT NOT NULL,
+ profile_uri TEXT NOT NULL UNIQUE,
+ created_at TEXT NOT NULL
+);
 `);
 export type Account = {id:string; did:string; handle:string; secret:string; token_hash:string};
 export type Pet = {id:string; account_id:string; name:string; personality:string; topics:string; style:string; interval_minutes:number; enabled:number; next_run_at:string|null; last_post_at:string|null; last_error:string|null; created_at:string};
+export type BotAccount = {did:string; handle:string; pds_url:string; encrypted_session:string; profile_uri:string; created_at:string};
