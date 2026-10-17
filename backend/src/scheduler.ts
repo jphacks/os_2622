@@ -13,7 +13,13 @@ export async function runDuePosts() {
     if(!claim.changes)continue;
     const account=db.prepare('SELECT * FROM accounts WHERE id=?').get(pet.account_id) as Account|undefined;
     if(!account)continue;
-    try { await submitPost(account,pet); } catch(error){console.error('Scheduled publish failed for',pet.id,error);}
+    try {
+      // A user may have disabled the pet while its turn was waiting in this
+      // scheduler batch. Recheck immediately before the AI/network work.
+      const stillEnabled = db.prepare('SELECT enabled FROM pets WHERE id=?').get(pet.id) as { enabled: number } | undefined;
+      if (!stillEnabled?.enabled) continue;
+      await submitPost(account, pet, undefined, { autonomous: true });
+    } catch(error){console.error('Scheduled publish failed for',pet.id,error);}
   }
  }finally{busy=false;}
 }

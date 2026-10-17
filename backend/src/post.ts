@@ -2,9 +2,24 @@ import { randomUUID } from 'node:crypto';
 import { db, type Account, type Pet } from './db.js';
 import { publish } from './bluesky.js';
 import { generatePost } from './ai.js';
-export async function submitPost(account:Account,pet:Pet,providedText?:string) {
+
+type SubmitOptions = {
+  /** Recheck the owner's stop switch after generation, before publishing. */
+  autonomous?: boolean;
+};
+
+export async function submitPost(
+  account: Account,
+  pet: Pet,
+  providedText?: string,
+  options: SubmitOptions = {},
+) {
  const text=providedText ?? await generatePost(pet);
  if(!text.trim()||Array.from(text).length>300) throw new Error('Post must contain 1-300 Unicode characters');
+ if (options.autonomous) {
+   const current = db.prepare('SELECT enabled FROM pets WHERE id=?').get(pet.id) as { enabled: number } | undefined;
+   if (!current?.enabled) throw new Error('Autonomous posting was stopped by the owner');
+ }
  const id=randomUUID();
  try {
    const result=await publish(account,text);
