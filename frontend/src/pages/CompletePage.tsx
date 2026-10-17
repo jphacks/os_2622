@@ -1,6 +1,7 @@
 import { Link, useLocation, Navigate } from "react-router-dom";
 import { AppHeader } from "../components/AppHeader";
 import { PrimaryButton } from "../components/PrimaryButton";
+import { useDemo } from "../state/demo";
 import type { CreateBotResponse } from "../types/bot";
 
 type CompleteLocationState = {
@@ -8,6 +9,7 @@ type CompleteLocationState = {
 };
 
 export function CompletePage() {
+  const { account, logout } = useDemo();
   const location = useLocation();
   const state = location.state as CompleteLocationState | null;
   const result = state?.result;
@@ -17,7 +19,7 @@ export function CompletePage() {
 
   return (
     <div className="site-shell">
-      <AppHeader />
+      <AppHeader account={account} onLogout={logout} />
       <main className="complete-page">
         <div className="success-icon" aria-hidden="true">✓</div>
         <p className="eyebrow">A NEW PET IS BORN</p>
@@ -38,8 +40,8 @@ export function CompletePage() {
           <div className="summary-divider" />
         </section>
 
-        <Link to="/" className="button-link">
-          <PrimaryButton fullWidth>トップに戻る</PrimaryButton>
+        <Link to="/mypage" className="button-link">
+          <PrimaryButton fullWidth>マイページへ</PrimaryButton>
         </Link>
         <p className="microcopy">ボットID：{result.bot.id}</p>
       </main>
