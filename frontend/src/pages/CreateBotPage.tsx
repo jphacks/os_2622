@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useDemo } from "../state/demo";
 import { AppHeader } from "../components/AppHeader";
 import { FormField } from "../components/FormField";
@@ -10,13 +10,15 @@ type FormErrors = Record<string, string>;
 
 export function CreateBotPage() {
   const navigate = useNavigate();
-  const { account, logout, addPet } = useDemo();
+  const { account, pet, logout, addPet } = useDemo();
   const [name, setName] = useState("");
   const [personality, setPersonality] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (pet) return <Navigate to="/mypage" replace />;
 
   function validate() {
     const next: FormErrors = {};
@@ -38,7 +40,7 @@ export function CreateBotPage() {
     setIsSubmitting(true);
     try {
       const bot = addPet({ name: name.trim(), personality: personality.trim(), interests });
-      navigate("/complete", { state: { result: { bot, firstPost: { status: "queued" } } } });
+      navigate("/complete", { state: { result: { bot } } });
     } catch {
       setSubmitError("ペットを保存できませんでした。ブラウザの保存設定を確認してください。");
     } finally {

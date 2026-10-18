@@ -4,7 +4,7 @@ import { PetCard } from "../components/PetCard";
 import { useDemo } from "../state/demo";
 
 export function MyPage() {
-  const { account, pets, logout } = useDemo();
+  const { account, pet, logout } = useDemo();
   return <div className="site-shell">
     <AppHeader account={account} onLogout={logout} />
     <main className="mypage">
@@ -14,11 +14,11 @@ export function MyPage() {
         </div>
       </div>
       <div className="pets-heading">
-        <h2>あなたのペット <span className="pet-count">{pets.length}匹</span></h2>
-        <Link to="/create" className="primary-button">＋ ペットを作る</Link>
+        <h2>あなたのペット <span className="pet-count">{pet ? 1 : 0}匹</span></h2>
+        {!pet && <Link to="/create" className="primary-button">＋ ペットを作る</Link>}
       </div>
-      <p className="field-hint demo-note">デモ版：ペットはこのブラウザに保存されます。自動投稿は行いません。</p>
-      {pets.length ? <div className="pet-grid">{pets.map((pet) => <PetCard key={pet.id} pet={pet} />)}</div> :
+      <p className="field-hint demo-note">1アカウントにつき1匹のペットを設定できます。現在はブラウザ内への仮保存で、自動投稿は行いません。</p>
+      {pet ? <div className="pet-grid"><PetCard pet={pet} /></div> :
         <section className="empty-pets">
           <div className="pet-avatar" aria-hidden="true">☁️</div>
           <h2>はじめてのペットを迎えよう</h2>
