@@ -189,3 +189,8 @@ if (env.ENABLE_SCHEDULER === 'true') {
   setInterval(() => { void runDuePosts(); }, 60000);
   void runDuePosts();
 }
+
+import { initScheduler } from "./scheduler.js";
+
+// サーバー起動処理の付近でスケジューラーを起動
+initScheduler();
