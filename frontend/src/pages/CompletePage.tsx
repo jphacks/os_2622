@@ -44,6 +44,12 @@ export function CompletePage() {
           {result.firstPost?.status === "failed" && (
             <p className="field-error" role="alert">ペットの登録は完了しましたが、最初のあいさつの投稿に失敗しました。</p>
           )}
+          {result.additionalPost?.status === "posted" && (
+            <p className="field-hint" role="status">ペットの個性をもとにした日常のひとこともBlueskyに投稿しました！</p>
+          )}
+          {result.additionalPost?.status === "failed" && (
+            <p className="field-error" role="alert">ペットの登録は完了しましたが、日常のひとことの生成・投稿に失敗しました。</p>
+          )}
         </section>
 
         <Link to="/mypage" className="button-link">

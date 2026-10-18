@@ -1,9 +1,9 @@
 import { BskyAgent, type AtpSessionData, type AtpSessionEvent } from '@atproto/api';
 import { findBotAccount, readBotSession, updateBotSession } from './bot-accounts.js';
-import { RegistrationError, validateCreateBotInput, type RegisteredBot, type RegistrationAccount } from './bot-registration.js';
+import { RegistrationError, type RegisteredBot, type RegistrationAccount } from './bot-registration.js';
+import { PET_PROFILE_COLLECTION, PET_PROFILE_RKEY, readPetProfile } from './pet-profile-record.js';
 
-export const PET_PROFILE_COLLECTION = 'com.nyuun.peta.profile';
-export const PET_PROFILE_RKEY = 'self';
+export { PET_PROFILE_COLLECTION, PET_PROFILE_RKEY } from './pet-profile-record.js';
 
 export type AuthenticatedPetAccount = RegistrationAccount & {
   agent: BskyAgent;
@@ -117,13 +117,7 @@ export async function getRegisteredPet(did: string): Promise<RegisteredBot['bot'
   if (!account) return null;
   const restored = await restorePetAgent(did);
   if (!restored.ok) throw new RegistrationError(502, 'PDS_REQUEST_FAILED', 'ペットの接続情報を復元できませんでした。');
-  const response = await restored.agent.com.atproto.repo.getRecord({
-    repo: did, collection: PET_PROFILE_COLLECTION, rkey: PET_PROFILE_RKEY,
-  });
-  const { bot } = validateCreateBotInput({
-    account: { identifier: did, appPassword: 'profile-validation-only' },
-    bot: response.data.value,
-  });
+  const bot = await readPetProfile({ did, agent: restored.agent });
   return { id: did, ...bot, status: 'active', createdAt: account.created_at };
 }
 
