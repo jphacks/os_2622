@@ -17,7 +17,7 @@ export function MyPage() {
         <h2>あなたのペット <span className="pet-count">{pet ? 1 : 0}匹</span></h2>
         {!pet && <Link to="/create" className="primary-button">＋ ペットを作る</Link>}
       </div>
-      <p className="field-hint demo-note">1アカウントにつき1匹のペットを設定できます。現在はブラウザ内への仮保存で、自動投稿は行いません。</p>
+      <p className="field-hint demo-note">1アカウントにつき1匹のペットを設定できます。</p>
       {pet ? <div className="pet-grid"><PetCard pet={pet} /></div> :
         <section className="empty-pets">
           <div className="pet-avatar" aria-hidden="true">☁️</div>

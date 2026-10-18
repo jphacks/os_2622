@@ -1,8 +1,4 @@
 export type CreateBotRequest = {
-  account: {
-    identifier: string;
-    appPassword: string;
-  };
   bot: {
     name: string;
     personality: string;
@@ -11,6 +7,7 @@ export type CreateBotRequest = {
 };
 
 export type CreateBotResponse = {
+  firstPost: { status: "posted"; uri: string; cid: string } | { status: "failed" };
   bot: {
     id: string;
     name: string;

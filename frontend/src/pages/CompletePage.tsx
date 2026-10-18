@@ -38,6 +38,12 @@ export function CompletePage() {
             ))}
           </div>
           <div className="summary-divider" />
+          {result.firstPost?.status === "posted" && (
+            <p className="field-hint" role="status">最初のあいさつをBlueskyに投稿しました！</p>
+          )}
+          {result.firstPost?.status === "failed" && (
+            <p className="field-error" role="alert">ペットの登録は完了しましたが、最初のあいさつの投稿に失敗しました。</p>
+          )}
         </section>
 
         <Link to="/mypage" className="button-link">

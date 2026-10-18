@@ -7,18 +7,22 @@
 
 開発時は Vite が `/api` を `http://127.0.0.1:3001` に転送する。別のAPIサーバーを利用する場合は `VITE_API_BASE_URL` を指定し、バックエンドの `FRONTEND_ORIGIN` も合わせる。本番では同一オリジンの `/api` 転送か `VITE_API_BASE_URL` の設定が必要。
 
-## ペットの仮仕様
+## ペット登録・取得
 
-BlueskyのDIDをキーとして localStorage に1匹だけ保存する。ペットIDもDIDとし、ハンドルの変更によって別ペットとして扱わない。以前の複数匹デモデータは使用しない。
-
-ペット登録・取得・投稿はまだAPIに接続していない。将来は `DemoProvider` のペット取得・保存を置き換える。現在の `/api/bots` は登録時にアプリパスワードを要求し、登録済みプロフィールの取得APIもないため、ログイン後のトークンで登録・取得する契約の整備が必要。
+- 作成は `POST /api/bots` にアプリ用Bearerトークンと `{ bot: { name, personality, interests } }` を送る。
+- バックエンドがログイン済みアカウントの認証情報を使い、PDSの `com.nyuun.peta.profile/self` に設定を作成する。ブラウザからパスワードを再送しない。
+- 運用用セッションは `bot_accounts` に暗号化して保存する。DIDごとに1匹で、重複作成は409になる。
+- `GET /api/bots/me` は同じBearerトークンで自分の登録済みペットを取得する。未登録は `{ bot: null }`、取得失敗はエラーで返す。
+- ログイン・再読み込み時にプロフィールを取得し、マイページを復元する。以前のlocalStorageの仮ペットは参照しない。
+- 登録完了後、その場で「初めまして！AIペットの〇〇です！！」を投稿する。レスポンスの `firstPost.status` は `posted` または `failed`。投稿失敗でも登録は完了として返し、完了画面で失敗を表示する。重複登録時には再投稿しない。定期投稿の開始は別処理。
+- 従来の認証情報を同時送信する登録APIと `/api/pets` は互換性のため残している。今回のフロントはログイン済み `/api/bots` 経路を利用する。
 
 ## 確認
 
 ```sh
 npm run build
 npm run lint
-node --test tests/auth.test.cjs
+node --test tests/*.test.cjs
 ```
 
-認証テストはモックのHTTPレスポンスを使用し、実際のBlueskyへのログインや投稿は行わない。
+フロントのテストはモックのHTTPレスポンスを使用する。バックエンドは `backend/` で `node --import tsx --test tests/*.test.ts` を実行する。実際のBlueskyへのログインや投稿は行わない。
