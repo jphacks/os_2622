@@ -5,20 +5,39 @@ import { z, ZodError } from 'zod';
 import { randomUUID } from 'node:crypto';
 import env from './config.js';
 import { db, type Account, type Pet } from './db.js';
-import { encrypt, hashToken, newToken } from './crypto.js';
+import { decrypt, encrypt, hashToken, newToken } from './crypto.js';
 import { login } from './bluesky.js';
 import { generatePost } from './ai.js';
 import { submitPost } from './post.js';
 import { runDuePosts } from './scheduler.js';
 import { findBotAccount, saveBotAccount } from './bot-accounts.js';
-import { registerBot } from './bot-registration.js';
-import { authenticatePetAccount, createPetProfile, type AuthenticatedPetAccount } from './pet-profile.js';
+import { registerBot, RegistrationError } from './bot-registration.js';
+import { authenticatePetAccount, createPetProfile, getRegisteredPet, type AuthenticatedPetAccount } from './pet-profile.js';
+import { createAccountBotsRouter } from './account-bots-router.js';
 import { createBotsRouter } from './bots-router.js';
 import { createPostReceiveRouter } from './post-receive-router.js';
 
 const app = express();
 app.disable('x-powered-by');
 app.use(cors({ origin: env.FRONTEND_ORIGIN.split(',').map((origin) => origin.trim()) }));
+app.use('/api/bots', createAccountBotsRouter({
+  auth,
+  account: (req) => (req as AuthedRequest).account,
+  password: (account) => decrypt(account.secret),
+  getBot: getRegisteredPet,
+  register: (input, did) => registerBot<AuthenticatedPetAccount>(input, {
+    authenticate: async (identifier, password) => {
+      const account = await authenticatePetAccount(identifier, password);
+      if (account.did !== did) throw new RegistrationError(401, 'ACCOUNT_AUTH_FAILED', 'アカウントが一致しません。');
+      return account;
+    },
+    isRegistered: (id) => Boolean(findBotAccount(id)),
+    createProfile: createPetProfile,
+    saveAccount: saveBotAccount,
+    onSaved: (account) => account.enableSessionPersistence(),
+    now: () => new Date(),
+  }),
+}));
 app.use('/api/bots', createBotsRouter((input) => registerBot<AuthenticatedPetAccount>(input, {
   authenticate: authenticatePetAccount,
   isRegistered: (did) => Boolean(findBotAccount(did)),

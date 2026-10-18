@@ -18,7 +18,7 @@ export function CreateBotPage() {
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (pet) return <Navigate to="/mypage" replace />;
+  if (pet && !isSubmitting) return <Navigate to="/mypage" replace />;
 
   function validate() {
     const next: FormErrors = {};
@@ -39,10 +39,12 @@ export function CreateBotPage() {
 
     setIsSubmitting(true);
     try {
-      const bot = addPet({ name: name.trim(), personality: personality.trim(), interests });
+      const bot = await addPet({ name: name.trim(), personality: personality.trim(), interests });
       navigate("/complete", { state: { result: { bot } } });
-    } catch {
-      setSubmitError("ペットを保存できませんでした。ブラウザの保存設定を確認してください。");
+    } catch (error) {
+      const apiError = error as Error & { fields?: FormErrors };
+      if (apiError.fields) setErrors(apiError.fields);
+      setSubmitError(apiError.message || "ペットを作成できませんでした。時間をおいて再度お試しください。");
     } finally {
       setIsSubmitting(false);
     }

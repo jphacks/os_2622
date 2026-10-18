@@ -1,8 +1,4 @@
 export type CreateBotRequest = {
-  account: {
-    identifier: string;
-    appPassword: string;
-  };
   bot: {
     name: string;
     personality: string;

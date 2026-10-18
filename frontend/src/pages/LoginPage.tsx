@@ -42,7 +42,7 @@ export function LoginPage() {
         <section className="form-section">
           <FormField id="identifier" label="Blueskyのハンドル" placeholder="example.bsky.social" autoComplete="username" value={identifier} onChange={(event) => setIdentifier(event.target.value)} required />
           <FormField id="appPassword" label="アプリパスワード" type="password" autoComplete="current-password" placeholder="xxxx-xxxx-xxxx-xxxx" value={password} onChange={(event) => setPassword(event.target.value)} required />
-          <p className="field-hint">Blueskyで発行したアプリパスワードを入力してください。ペットの設定は現在、このブラウザに仮保存されます。</p>
+          <p className="field-hint">Blueskyで発行したアプリパスワードを入力してください。登録済みのペットがある場合は、マイページに表示します。</p>
         </section>
         {error && <p className="alert-error" role="alert">{error}</p>}
         <PrimaryButton type="submit" fullWidth disabled={isSubmitting}>{isSubmitting ? "ログインしています..." : "ログイン"}</PrimaryButton>
