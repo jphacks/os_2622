@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { connectAccount, getAccount, type AuthSession } from "../api/auth";
 import { createBot, getMyBot } from "../api/bots";
 import { DemoContext, type Pet } from "./demo";
+import type { CreateBotResponse } from "../types/bot";
 
 const SESSION_KEY = "peta-session-v1";
 
@@ -51,7 +52,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     setSession(null);
     setPet(null);
   }
-  async function addPet(input: Pick<Pet, "name" | "personality" | "interests">): Promise<Pet> {
+  async function addPet(input: Pick<Pet, "name" | "personality" | "interests">): Promise<CreateBotResponse> {
     const activeSession = currentSession.current;
     if (!activeSession) throw new Error("ログインしてください。");
     if (pet || creating.current) throw new Error("このアカウントには既にペットが設定されているか、作成中です。");
@@ -60,7 +61,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       const result = await createBot(activeSession.token, { bot: input });
       if (currentSession.current !== activeSession) throw new Error("ログイン状態が変更されました。再度ログインしてください。");
       setPet(result.bot);
-      return result.bot;
+      return result;
     } catch (error) {
       // Recover the authoritative profile after duplicate registration or a lost response.
       try {

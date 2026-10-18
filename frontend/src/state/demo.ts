@@ -9,7 +9,7 @@ export type DemoState = {
   pet: Pet | null;
   login: (identifier: string, password: string) => Promise<void>;
   logout: () => void;
-  addPet: (pet: Pick<Pet, "name" | "personality" | "interests">) => Promise<Pet>;
+  addPet: (pet: Pick<Pet, "name" | "personality" | "interests">) => Promise<CreateBotResponse>;
 };
 export const DemoContext = createContext<DemoState | null>(null);
 export function useDemo() {

@@ -35,6 +35,7 @@ app.use('/api/bots', createAccountBotsRouter({
     createProfile: createPetProfile,
     saveAccount: saveBotAccount,
     onSaved: (account) => account.enableSessionPersistence(),
+    publishIntroduction: (account, text) => account.agent.post({ text, createdAt: new Date().toISOString() }),
     now: () => new Date(),
   }),
 }));
@@ -44,6 +45,7 @@ app.use('/api/bots', createBotsRouter((input) => registerBot<AuthenticatedPetAcc
   createProfile: createPetProfile,
   saveAccount: saveBotAccount,
   onSaved: (account) => account.enableSessionPersistence(),
+  publishIntroduction: (account, text) => account.agent.post({ text, createdAt: new Date().toISOString() }),
   now: () => new Date(),
 })));
 app.use('/api/bots', createPostReceiveRouter());

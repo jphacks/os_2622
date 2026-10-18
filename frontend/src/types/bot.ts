@@ -7,6 +7,7 @@ export type CreateBotRequest = {
 };
 
 export type CreateBotResponse = {
+  firstPost: { status: "posted"; uri: string; cid: string } | { status: "failed" };
   bot: {
     id: string;
     name: string;

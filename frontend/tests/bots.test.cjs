@@ -14,6 +14,7 @@ function loadApi(fetch) {
   new Function('exports', 'fetch', outputText)(exports, fetch);
   return exports;
 }
+const firstPost = { status: 'posted', uri: 'at://intro', cid: 'intro-cid' };
 const bot = { id: 'did:plc:pet', name: 'もち', personality: '好奇心旺盛', interests: ['散歩'], status: 'active', createdAt: '2026-10-18T00:00:00.000Z' };
 
 test('creation uses the login token without resending credentials', async () => {
@@ -23,9 +24,9 @@ test('creation uses the login token without resending credentials', async () => 
     assert.equal(options.method, 'POST');
     assert.equal(options.headers.Authorization, 'Bearer app-token');
     assert.deepEqual(JSON.parse(options.body), input);
-    return Response.json({ bot }, { status: 201 });
+    return Response.json({ bot, firstPost }, { status: 201 });
   });
-  assert.deepEqual(await api.createBot('app-token', input), { bot });
+  assert.deepEqual(await api.createBot('app-token', input), { bot, firstPost });
 });
 
 test('registered profile and unregistered state come from the API', async () => {

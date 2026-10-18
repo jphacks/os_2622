@@ -39,8 +39,8 @@ export function CreateBotPage() {
 
     setIsSubmitting(true);
     try {
-      const bot = await addPet({ name: name.trim(), personality: personality.trim(), interests });
-      navigate("/complete", { state: { result: { bot } } });
+      const result = await addPet({ name: name.trim(), personality: personality.trim(), interests });
+      navigate("/complete", { state: { result } });
     } catch (error) {
       const apiError = error as Error & { fields?: FormErrors };
       if (apiError.fields) setErrors(apiError.fields);

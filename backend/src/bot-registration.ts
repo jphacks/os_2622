@@ -9,6 +9,7 @@ export type ValidatedCreateBotInput = CreateBotInput;
 
 export type RegisteredBot = {
   bot: ValidatedCreateBotInput['bot'] & { id: string; status: 'active'; createdAt: string };
+  firstPost: { status: 'posted'; uri: string; cid: string } | { status: 'failed' };
 };
 
 export type RegistrationAccount = {did: string; handle: string; pdsUrl: string; session: AtpSessionData};
@@ -19,6 +20,7 @@ export type RegistrationDependencies<Account extends RegistrationAccount = Regis
   createProfile(account: Account, profile: ValidatedCreateBotInput['bot']): Promise<string>;
   saveAccount(input: RegistrationAccount & {profileUri: string; createdAt: string}): void;
   onSaved?(account: Account): void;
+  publishIntroduction(account: Account, text: string): Promise<{uri: string; cid: string}>;
   now(): Date;
 };
 
@@ -84,7 +86,16 @@ export async function registerBot<Account extends RegistrationAccount>(input: Va
   } catch {
     throw new RegistrationError(500, 'INTERNAL_ERROR', 'ペット設定をローカルに保存できませんでした。管理者にお問い合わせください。');
   }
-  return {bot: {id: account.did, ...input.bot, status: 'active', createdAt}};
+  // Persist registration before posting so retries cannot create a second introduction.
+  // A posting failure must not turn an already-completed registration into an error.
+  let firstPost: RegisteredBot['firstPost'];
+  try {
+    const result = await dependencies.publishIntroduction(account, `初めまして！AIペットの${input.bot.name}です！！`);
+    firstPost = { status: 'posted', uri: result.uri, cid: result.cid };
+  } catch {
+    firstPost = { status: 'failed' };
+  }
+  return {bot: {id: account.did, ...input.bot, status: 'active', createdAt}, firstPost};
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
