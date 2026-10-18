@@ -37,6 +37,11 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visib
   justify-content: space-between;
 }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.2rem; letter-spacing: -0.04em; }
+.app-header { gap: 16px; flex-wrap: wrap; }
+.header-account { display: flex; align-items: center; justify-content: flex-end; gap: 12px; min-width: 0; max-width: 100%; margin-left: auto; }
+.header-login-status { display: flex; flex-direction: column; gap: 3px; color: var(--muted); font-size: .75rem; min-width: 0; }
+.header-handle { color: var(--ink); font-size: .85rem; overflow-wrap: anywhere; }
+.header-account .text-button { flex-shrink: 0; }
 .brand-mark {
   display: grid; place-items: center; width: 36px; height: 36px;
   border-radius: 12px; background: #e2ecff; color: var(--blue); font-size: 1.5rem;
@@ -133,6 +138,20 @@ textarea.form-control { resize: vertical; min-height: 112px; line-height: 1.65; 
 .status-line { display: flex; justify-content: center; align-items: center; gap: 9px; font-size: .84rem; font-weight: 600; }
 .status-dot { width: 8px; height: 8px; background: #22a06b; border-radius: 50%; }
 .status-dot--error { background: #d92d20; }
+.mypage { width: min(100% - 32px, 1040px); margin: 0 auto; padding: 24px 0 72px; }
+.mypage-heading, .pets-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.mypage-heading .page-description { overflow-wrap: anywhere; }
+.text-button { border: 1px solid var(--line); border-radius: 999px; padding: 10px 16px; background: white; color: var(--muted); cursor: pointer; }
+.pets-heading h2 { margin: 0; font-size: 1.2rem; }
+.pet-count { margin-left: 8px; font-size: .85rem; color: var(--muted); font-weight: 400; }
+.demo-note { margin: 16px 0 24px; }
+.pet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px; }
+.pet-card { margin: 0; text-align: center; min-width: 0; }
+.pet-card h2 { overflow-wrap: anywhere; }
+.pet-card .interest-tag { overflow-wrap: anywhere; min-width: 0; max-width: 100%; }
+.empty-pets { text-align: center; padding: 48px 24px; background: white; border: 1px solid var(--line); border-radius: 22px; }
+.empty-pets h2 { font-size: 1.3rem; }
+.empty-pets p { color: var(--muted); line-height: 1.8; }
 @media (min-width: 700px) {
   .form-page { padding-top: 24px; }
   .landing-main { padding-top: 32px; }

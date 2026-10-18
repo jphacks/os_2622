@@ -1,6 +1,7 @@
 import { Link, useLocation, Navigate } from "react-router-dom";
 import { AppHeader } from "../components/AppHeader";
 import { PrimaryButton } from "../components/PrimaryButton";
+import { useDemo } from "../state/demo";
 import type { CreateBotResponse } from "../types/bot";
 
 type CompleteLocationState = {
@@ -8,6 +9,7 @@ type CompleteLocationState = {
 };
 
 export function CompletePage() {
+  const { account, logout } = useDemo();
   const location = useLocation();
   const state = location.state as CompleteLocationState | null;
   const result = state?.result;
@@ -15,11 +17,9 @@ export function CompletePage() {
   // A direct visit to /complete has no creation result to display.
   if (!result) return <Navigate to="/" replace />;
 
-  const postStatus = result.firstPost.status;
-
   return (
     <div className="site-shell">
-      <AppHeader />
+      <AppHeader account={account} onLogout={logout} />
       <main className="complete-page">
         <div className="success-icon" aria-hidden="true">✓</div>
         <p className="eyebrow">A NEW PET IS BORN</p>
@@ -38,21 +38,10 @@ export function CompletePage() {
             ))}
           </div>
           <div className="summary-divider" />
-          <div className="status-line">
-            <span className={`status-dot${postStatus === "failed" ? " status-dot--error" : ""}`} />
-            <span>
-              {postStatus === "queued" && "自動投稿の準備ができました"}
-              {postStatus === "posted" && "最初の投稿が完了しました"}
-              {postStatus === "failed" && "最初の投稿に失敗しました"}
-            </span>
-          </div>
-          {postStatus === "queued" && (
-            <p className="field-hint">最初の投稿は準備でき次第、公開されます。</p>
-          )}
         </section>
 
-        <Link to="/" className="button-link">
-          <PrimaryButton fullWidth>トップに戻る</PrimaryButton>
+        <Link to="/mypage" className="button-link">
+          <PrimaryButton fullWidth>マイページへ</PrimaryButton>
         </Link>
         <p className="microcopy">ボットID：{result.bot.id}</p>
       </main>

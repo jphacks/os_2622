@@ -1,18 +1,16 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { createBot } from "../api/bots";
+import { Link, useNavigate } from "react-router-dom";
+import { useDemo } from "../state/demo";
 import { AppHeader } from "../components/AppHeader";
 import { FormField } from "../components/FormField";
 import { InterestTagInput } from "../components/InterestTagInput";
 import { PrimaryButton } from "../components/PrimaryButton";
-import type { CreateBotRequest } from "../types/bot";
 
 type FormErrors = Record<string, string>;
 
 export function CreateBotPage() {
   const navigate = useNavigate();
-  const [identifier, setIdentifier] = useState("");
-  const [appPassword, setAppPassword] = useState("");
+  const { account, logout, addPet } = useDemo();
   const [name, setName] = useState("");
   const [personality, setPersonality] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
@@ -22,8 +20,6 @@ export function CreateBotPage() {
 
   function validate() {
     const next: FormErrors = {};
-    if (!identifier.trim()) next.identifier = "identifierを入力してください。";
-    if (!appPassword.trim()) next.appPassword = "アプリパスワードを入力してください。";
     if (!name.trim()) next.name = "ペットの名前を入力してください。";
     else if (name.trim().length > 30) next.name = "名前は30文字以内で入力してください。";
     if (!personality.trim()) next.personality = "性格を入力してください。";
@@ -39,25 +35,12 @@ export function CreateBotPage() {
     setSubmitError("");
     if (!validate() || isSubmitting) return;
 
-    const payload: CreateBotRequest = {
-      account: { identifier: identifier.trim(), appPassword },
-      bot: { name: name.trim(), personality: personality.trim(), interests },
-    };
-
     setIsSubmitting(true);
     try {
-      const result = await createBot(payload);
-      // Password is intentionally not persisted in browser storage.
-      setAppPassword("");
-      navigate("/complete", { state: { result } });
-    } catch (error) {
-      const apiError = error as Error & { status?: number; fields?: Record<string, string> };
-      if (apiError.fields) setErrors((current) => ({ ...current, ...apiError.fields }));
-      setSubmitError(
-        apiError.status === 401
-          ? "Blueskyの認証に失敗しました。identifierとアプリパスワードを確認してください。"
-          : apiError.message || "作成に失敗しました。時間をおいて再度お試しください。",
-      );
+      const bot = addPet({ name: name.trim(), personality: personality.trim(), interests });
+      navigate("/complete", { state: { result: { bot, firstPost: { status: "queued" } } } });
+    } catch {
+      setSubmitError("ペットを保存できませんでした。ブラウザの保存設定を確認してください。");
     } finally {
       setIsSubmitting(false);
     }
@@ -65,55 +48,19 @@ export function CreateBotPage() {
 
   return (
     <div className="site-shell">
-      <AppHeader />
+      <AppHeader account={account} onLogout={logout} />
       <main className="form-page">
         <div className="page-heading">
-          <Link className="back-link" to="/" onClick={(e) => { e.preventDefault(); navigate("/"); }}>
-            ← トップへ戻る
+          <Link className="back-link" to="/mypage">
+            ← マイページへ戻る
           </Link>
           <p className="eyebrow">CREATE YOUR PET</p>
           <h1>ペットを作ろう</h1>
-          <p className="page-description">アカウントとペットの個性を設定してください。</p>
+          <p className="page-description">ペットの個性を設定してください。</p>
           <div className="progress-track"><span /></div>
         </div>
 
         <form className="create-form" onSubmit={handleSubmit} noValidate>
-          <section className="form-section">
-            <div className="section-heading">
-              <span className="section-icon">↗</span>
-              <div>
-                <h2>Blueskyアカウント</h2>
-                <p>ペットが活動するアカウントを設定します。</p>
-              </div>
-            </div>
-            <FormField
-              id="identifier"
-              label="ハンドル / identifier"
-              placeholder="example.bsky.social"
-              autoComplete="username"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              error={errors.identifier}
-              required
-            />
-            <FormField
-              id="appPassword"
-              label="アプリパスワード"
-              type="password"
-              placeholder="xxxx-xxxx-xxxx-xxxx"
-              autoComplete="new-password"
-              value={appPassword}
-              onChange={(e) => setAppPassword(e.target.value)}
-              error={errors.appPassword}
-              hint="通常のアカウントパスワードではなく、Blueskyで発行したアプリパスワードを使用してください。"
-              required
-            />
-            <div className="security-note">
-              <span aria-hidden="true">♢</span>
-              <p>アプリパスワードは認証にのみ使用します。フォーム送信後、ブラウザの永続ストレージには保存しません。</p>
-            </div>
-          </section>
-
           <section className="form-section">
             <div className="section-heading">
               <span className="section-icon">♡</span>
@@ -158,7 +105,7 @@ export function CreateBotPage() {
             <PrimaryButton type="submit" fullWidth disabled={isSubmitting}>
               {isSubmitting ? <><span className="spinner" /> 作成しています...</> : <>ペットを作成して送り出す <span aria-hidden="true">→</span></>}
             </PrimaryButton>
-            <p>作成すると、自動投稿が開始されます。</p>
+            <p>作成したペットはマイページで確認できます。</p>
           </div>
         </form>
       </main>
@@ -166,5 +113,3 @@ export function CreateBotPage() {
   );
 }
 
-// Import Link locally for the back link above.
-import { Link } from "react-router-dom";
