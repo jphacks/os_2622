@@ -6,12 +6,8 @@ const env = z.object({
   FRONTEND_ORIGIN: z.string().default('http://localhost:5173'),
   DATABASE_PATH: z.string().default('./data/pets.sqlite'),
   ENCRYPTION_KEY: z.string().regex(/^[a-fA-F0-9]{64}$/, 'generate a 32-byte hex key'),
-  AI_API_KEY: z.string().optional(), AI_BASE_URL: z.string().url().default('https://api.openai.com/v1'),
-  AI_MODEL: z.string().default('gpt-4.1-mini'),
-  // Set this to false only when using an OpenAI-compatible provider without
-  // the /moderations endpoint. Autonomous posts otherwise fail closed.
-  AI_MODERATION_ENABLED: z.enum(['true', 'false']).default('true'),
-  AI_MODERATION_MODEL: z.string().default('omni-moderation-latest'),
+  GEMINI_API_KEY: z.string().trim().optional(),
+  GEMINI_MODEL: z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/).default('gemini-3.5-flash-lite'),
   POST_RECEIVE_TOKEN: z.string().min(32).optional(),
   ENABLE_SCHEDULER: z.enum(['true','false']).default('false'),
 }).parse(process.env);
