@@ -1,6 +1,7 @@
 import { Link, useLocation, Navigate } from "react-router-dom";
 import { AppHeader } from "../components/AppHeader";
 import { PrimaryButton } from "../components/PrimaryButton";
+import { PetAvatar } from "../components/PetAvatar";
 import { useDemo } from "../state/demo";
 import type { CreateBotResponse } from "../types/bot";
 
@@ -29,7 +30,7 @@ export function CompletePage() {
         </p>
 
         <section className="pet-summary" aria-label="作成したペット">
-          <div className="pet-avatar" aria-hidden="true">☁️</div>
+          <PetAvatar did={result.bot.id} name={result.bot.name} />
           <h2>{result.bot.name}</h2>
           <p className="pet-personality">{result.bot.personality}</p>
           <div className="tag-list">

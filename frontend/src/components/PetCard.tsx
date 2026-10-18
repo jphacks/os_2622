@@ -1,8 +1,9 @@
 import type { Pet } from "../state/demo";
+import { PetAvatar } from "./PetAvatar";
 
 export function PetCard({ pet }: { pet: Pet }) {
   return <article className="pet-summary pet-card" aria-label={pet.name}>
-    <div className="pet-avatar" aria-hidden="true">☁️</div>
+    <PetAvatar did={pet.id} name={pet.name} />
     <h2>{pet.name}</h2>
     <p className="pet-personality">{pet.personality}</p>
     <div className="tag-list">

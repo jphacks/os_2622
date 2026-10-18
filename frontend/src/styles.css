@@ -131,6 +131,10 @@ textarea.form-control { resize: vertical; min-height: 112px; line-height: 1.65; 
 .complete-copy { margin: 14px 0 26px; color: var(--muted); line-height: 1.8; }
 .pet-summary { width: 100%; border: 1px solid #eceef2; border-radius: 22px; background: white; padding: 28px 22px; margin-bottom: 22px; box-shadow: 0 8px 30px #26385808; }
 .pet-avatar { width: 84px; height: 84px; margin: 0 auto 14px; display: grid; place-items: center; border-radius: 50%; background: #e2ecff; font-size: 2.7rem; }
+.pet-avatar-link { text-decoration: none; transition: background-color .2s; }
+.pet-avatar-link:hover { background: #cdddff; }
+.pet-avatar-link img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.pet-avatar-link:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
 .pet-summary h2 { font-size: 1.35rem; margin: 0 0 8px; }
 .pet-personality { color: var(--muted); font-size: .88rem; line-height: 1.7; margin-bottom: 16px; overflow-wrap: anywhere; }
 .tag-list { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; }
