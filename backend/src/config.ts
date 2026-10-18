@@ -12,6 +12,7 @@ const env = z.object({
   // the /moderations endpoint. Autonomous posts otherwise fail closed.
   AI_MODERATION_ENABLED: z.enum(['true', 'false']).default('true'),
   AI_MODERATION_MODEL: z.string().default('omni-moderation-latest'),
+  POST_RECEIVE_TOKEN: z.string().min(32).optional(),
   ENABLE_SCHEDULER: z.enum(['true','false']).default('false'),
 }).parse(process.env);
 export default env;
