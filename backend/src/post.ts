@@ -1,24 +1,27 @@
 // backend/src/post.ts
 import { generatePost } from "./ai.js";
-import type { Pet } from "./db.js";
+import type { Pet, Account } from "./db.js";
+import { publish } from "./bluesky.js"; // bluesky.ts の publish をインポート
 
-// index.ts から渡される3つの引数 (account, pet, text) を受け取れるように定義
 export async function submitPost(
-  account: any,      // アカウント情報（必要に応じて型を指定）
-  pet: Pet,          // ペット情報
-  text?: string      // 手動入力のテキスト（空の場合はAIで生成）
+  account: Account,
+  pet: Pet,
+  text?: string
 ): Promise<any> {
   try {
-    // 手動入力テキストが無い場合は、AI（generatePost）で自動生成する
+    // 1. 手動テキストがない場合は AI（generatePost）で投稿文を生成
     const postContent = text || (await generatePost(pet));
 
-    // TODO: 既存の bluesky 送信処理や DB ログ保存処理を呼び出す
-    console.log(`[投稿実行] アカウント: ${account.id || "unknown"}, ペット: ${pet.name}, 内容: ${postContent}`);
+    // 2. bluesky.ts の publish 関数を使って Bluesky へ投稿
+    const result = await publish(account, postContent);
 
-    // index.ts のレスポンス用に結果オブジェクト等を返す
+    console.log(`[投稿成功] ペット: ${pet.name}, URI: ${result.uri}`);
+
     return {
       success: true,
       content: postContent,
+      uri: result.uri,
+      cid: result.cid,
       postedAt: new Date().toISOString(),
     };
   } catch (error) {
