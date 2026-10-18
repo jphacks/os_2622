@@ -133,6 +133,7 @@ textarea.form-control { resize: vertical; min-height: 112px; line-height: 1.65; 
 .pet-avatar { width: 84px; height: 84px; margin: 0 auto 14px; display: grid; place-items: center; border-radius: 50%; background: #e2ecff; font-size: 2.7rem; }
 .pet-avatar-link { text-decoration: none; transition: background-color .2s; }
 .pet-avatar-link:hover { background: #cdddff; }
+.pet-avatar-link img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .pet-avatar-link:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
 .pet-summary h2 { font-size: 1.35rem; margin: 0 0 8px; }
 .pet-personality { color: var(--muted); font-size: .88rem; line-height: 1.7; margin-bottom: 16px; overflow-wrap: anywhere; }
