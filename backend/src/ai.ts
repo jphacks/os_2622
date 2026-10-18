@@ -38,7 +38,7 @@ export function validateAutonomousPost(text: string): string {
   return cleaned;
 }
 
-export async function generatePost(pet: Pet): Promise<string> {
+export async function generatePost(pet: Pick<Pet, 'name' | 'personality' | 'topics' | 'style'>): Promise<string> {
   if (!env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY is not configured');
 
   const controller = new AbortController();

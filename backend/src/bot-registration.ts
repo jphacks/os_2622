@@ -7,9 +7,12 @@ export type CreateBotInput = {
 
 export type ValidatedCreateBotInput = CreateBotInput;
 
+export type RegistrationPostResult = { status: 'posted'; uri: string; cid: string } | { status: 'failed' };
+
 export type RegisteredBot = {
   bot: ValidatedCreateBotInput['bot'] & { id: string; status: 'active'; createdAt: string };
-  firstPost: { status: 'posted'; uri: string; cid: string } | { status: 'failed' };
+  firstPost: RegistrationPostResult;
+  additionalPost: RegistrationPostResult;
 };
 
 export type RegistrationAccount = {did: string; handle: string; pdsUrl: string; session: AtpSessionData};
@@ -21,6 +24,7 @@ export type RegistrationDependencies<Account extends RegistrationAccount = Regis
   saveAccount(input: RegistrationAccount & {profileUri: string; createdAt: string}): void;
   onSaved?(account: Account): void;
   publishIntroduction(account: Account, text: string): Promise<{uri: string; cid: string}>;
+  publishAdditionalPost(account: Account): Promise<{uri: string; cid: string}>;
   now(): Date;
 };
 
@@ -95,7 +99,15 @@ export async function registerBot<Account extends RegistrationAccount>(input: Va
   } catch {
     firstPost = { status: 'failed' };
   }
-  return {bot: {id: account.did, ...input.bot, status: 'active', createdAt}, firstPost};
+  // Attempt the profile-based post independently, even if the greeting failed.
+  let additionalPost: RegisteredBot['additionalPost'];
+  try {
+    const result = await dependencies.publishAdditionalPost(account);
+    additionalPost = { status: 'posted', uri: result.uri, cid: result.cid };
+  } catch {
+    additionalPost = { status: 'failed' };
+  }
+  return {bot: {id: account.did, ...input.bot, status: 'active', createdAt}, firstPost, additionalPost};
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {

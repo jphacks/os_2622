@@ -16,6 +16,7 @@ import { authenticatePetAccount, createPetProfile, getRegisteredPet, type Authen
 import { createAccountBotsRouter } from './account-bots-router.js';
 import { createBotsRouter } from './bots-router.js';
 import { createPostReceiveRouter } from './post-receive-router.js';
+import { publishPetPost } from './pet-post.js';
 
 const app = express();
 app.disable('x-powered-by');
@@ -36,6 +37,7 @@ app.use('/api/bots', createAccountBotsRouter({
     saveAccount: saveBotAccount,
     onSaved: (account) => account.enableSessionPersistence(),
     publishIntroduction: (account, text) => account.agent.post({ text, createdAt: new Date().toISOString() }),
+    publishAdditionalPost: publishPetPost,
     now: () => new Date(),
   }),
 }));
@@ -46,6 +48,7 @@ app.use('/api/bots', createBotsRouter((input) => registerBot<AuthenticatedPetAcc
   saveAccount: saveBotAccount,
   onSaved: (account) => account.enableSessionPersistence(),
   publishIntroduction: (account, text) => account.agent.post({ text, createdAt: new Date().toISOString() }),
+  publishAdditionalPost: publishPetPost,
   now: () => new Date(),
 })));
 app.use('/api/bots', createPostReceiveRouter());

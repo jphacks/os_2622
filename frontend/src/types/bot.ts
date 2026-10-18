@@ -6,8 +6,11 @@ export type CreateBotRequest = {
   };
 };
 
+type RegistrationPostResult = { status: "posted"; uri: string; cid: string } | { status: "failed" };
+
 export type CreateBotResponse = {
-  firstPost: { status: "posted"; uri: string; cid: string } | { status: "failed" };
+  firstPost: RegistrationPostResult;
+  additionalPost: RegistrationPostResult;
   bot: {
     id: string;
     name: string;
