@@ -19,9 +19,6 @@ export type CreateBotResponse = {
     status: "active";
     createdAt: string;
   };
-  firstPost: {
-    status: "queued" | "posted" | "failed";
-  };
 };
 
 export type ApiErrorResponse = {
