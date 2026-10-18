@@ -16,6 +16,8 @@
   --muted: #667085;
   --line: #e4e7ec;
   --surface: #ffffff;
+  color-scheme: light;
+  --text-h: #202b3c;
 }
 
 * { box-sizing: border-box; }
