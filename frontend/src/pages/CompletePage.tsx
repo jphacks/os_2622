@@ -29,7 +29,9 @@ export function CompletePage() {
         </p>
 
         <section className="pet-summary" aria-label="作成したペット">
-          <div className="pet-avatar" aria-hidden="true">☁️</div>
+          <a className="pet-avatar pet-avatar-link" href={`https://bsky.app/profile/${encodeURIComponent(result.bot.id).replace(/%3A/g, ":")}`} aria-label={`${result.bot.name}のBlueskyアカウントを開く`}>
+            <span aria-hidden="true">☁️</span>
+          </a>
           <h2>{result.bot.name}</h2>
           <p className="pet-personality">{result.bot.personality}</p>
           <div className="tag-list">
